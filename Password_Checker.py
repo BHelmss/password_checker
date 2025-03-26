@@ -10,7 +10,7 @@ Focus: Prioritize usability and length over forced complexity, encouraging memor
 '''
 
 '''
-NEXT STEPS (Delete this after done.)
+NEXT STEPS
 
 1. Figure out how to set different modes. One for manual entry, like is currently set and one for inputting a password list 
 that will go through each password line by line. 
