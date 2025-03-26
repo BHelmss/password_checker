@@ -12,17 +12,24 @@ Focus: Prioritize usability and length over forced complexity, encouraging memor
 '''
 NEXT STEPS (Delete this after done.)
 
-1. Incorporate rockyou.txt instead of hardcoded wordlist
-
-2. Figure out how to set different modes. One for manual entry, like is currently set and one for inputting a password list 
+1. Figure out how to set different modes. One for manual entry, like is currently set and one for inputting a password list 
 that will go through each password line by line. 
 
-3. Clean it up and make improve time complexity.
-
+2. Clean it up and make improve time complexity.
 '''
+import os
+
 #Define variables
 feedback = []
-common_words = ['password', 'qwerty', '123456789']
+common_words = []
+
+# Get the directory of the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+rockyou_path = os.path.join(script_dir, 'rockyou.txt')
+
+# Read the rockyou.txt file and store its contents in the common_words list
+with open(rockyou_path, 'r', encoding='utf-8', errors='ignore') as file:
+    common_words = file.read().splitlines()
 
 #Have user select between mode 1 or mode 2
 #Mode 1 is to maunally enter a password and Mode 2 is to enter a list of passwords
@@ -38,8 +45,7 @@ def pwd_length(pwd):
     
 #Check if password is in a common wordlist(rockyou.txt)
 def check_commonpwds(pwd):
-    for i in common_words:
-        if pwd == i:
+    if pwd in common_words:
             feedback.append("Password exists in a common password list, please select a different password.")
             return feedback
 
@@ -54,11 +60,11 @@ def check_pwd(password):
     
     #Print all feedback
     for i in feedback:
-        if i is not "None":
+        if i != "None":
             print(i)
 
     #If no feedback tell that the password is strong.
-    if len(feedback) is 0:
+    if len(feedback) == 0:
         print("The password is strong by NIST standards, no changes needed!!")
 
 
@@ -71,4 +77,5 @@ def main():
     print("\nCheck successful... feedback listed below!!\n")
     check_pwd(userInput)
     print()
+
 main()
