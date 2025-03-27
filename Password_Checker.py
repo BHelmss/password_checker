@@ -11,13 +11,10 @@ Focus: Prioritize usability and length over forced complexity, encouraging memor
 
 '''
 NEXT STEPS
-
-1. Figure out how to set different modes. One for manual entry, like is currently set and one for inputting a password list 
-that will go through each password line by line. 
-
-2. Clean it up and make improve time complexity.
+1. Clean it up and make improve time complexity.
 '''
 import os
+import argparse
 
 #Define variables
 feedback = []
@@ -30,9 +27,6 @@ rockyou_path = os.path.join(script_dir, 'rockyou.txt')
 # Read the rockyou.txt file and store its contents in the common_words list
 with open(rockyou_path, 'r', encoding='utf-8', errors='ignore') as file:
     common_words = file.read().splitlines()
-
-#Have user select between mode 1 or mode 2
-#Mode 1 is to maunally enter a password and Mode 2 is to enter a list of passwords
 
 #Function to check password length
 def pwd_length(pwd):
@@ -51,6 +45,8 @@ def check_commonpwds(pwd):
 
 #Function to call upon other functions
 def check_pwd(password):
+    #Clear feedback for each password (Mode 2)
+    feedback.clear()
 
     #Check password length
     pwd_length(password)
@@ -60,22 +56,51 @@ def check_pwd(password):
     
     #Print all feedback
     for i in feedback:
-        if i != "None":
-            print(i)
+        print(i)
 
     #If no feedback tell that the password is strong.
     if len(feedback) == 0:
         print("The password is strong by NIST standards, no changes needed!!")
 
-
-#Define main
-def main():
-    print("\nWelcome to the NIST 800-63B password compliance checker!!\n")
+# Function to handle Mode 1 (Manual entry)
+def mode_1():
     userInput = input("Please enter the password you want to check: ")
-
-    #Use the userInput as parameter for the check_pwd function
     print("\nCheck successful... feedback listed below!!\n")
     check_pwd(userInput)
     print()
 
-main()
+#Function to handle Mode 2 (Importing password list)
+def mode_2(wordlist_path):
+    try:
+        with open(wordlist_path, 'r', encoding='utf-8', errors='ignore') as file:
+            passwords = file.read().splitlines()
+        print(f"\nChecking passwords from the wordlist: {wordlist_path}\n")
+        for password in passwords:
+            print(f"Checking password: {password}")
+            check_pwd(password)
+            print("-" * 50)
+    except FileNotFoundError:
+        print(f"Error: The file '{wordlist_path}' was not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
+
+#Define main
+def main():
+    parser=argparse.ArgumentParser(description="Password Compliance Checker")
+    parser.add_argument(
+        "-l", "--list",
+        help="Path to a password list file to check line by line.",
+        type=str
+    )
+    args=parser.parse_args()
+
+    if args.list:
+        #Mode 2: Use a wordlist
+        mode_2(args.list)
+    else:
+        #Mode 1: Manual entry
+        print("\nWelcome to the NIST 800-63B password compliance checker!!\n")
+        mode_1()
+
+if __name__ == "__main__":
+    main()
